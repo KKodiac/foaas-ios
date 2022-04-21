@@ -7,9 +7,8 @@
 
 On-Going IOS application using foass(Fuck-Off-As-A-Service) public API
 
-<p align="row">
-![Demo](https://github.com/KKodiac/foaas-ios/tree/main/demo.gif)
-</p>
+![Demo](https://github.com/KKodiac/foaas-ios/blob/main/demo.gif)
+
 
 ## Features
 
