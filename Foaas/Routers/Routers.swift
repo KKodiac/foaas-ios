@@ -5,21 +5,16 @@
 //  Created by Sean Hong on 2022/04/17.
 //
 
-import Alamofire
 import Foundation
+import Alamofire
 
-enum APIRouter: URLRequestConvertible {
+enum BaseAPIRouter: URLRequestConvertible {
     case version
     case operations
-    case absolutely(company: String, from: String)
-    case anyway(company: String, from: String)
-    case asshole(from: String)
-    
-    
     // MARK: - HTTPMethod
     private var method: HTTPMethod {
         switch self {
-        case .version, .operations, .absolutely, .anyway, .asshole:
+        case .operations, .version:
             return .get
         }
     }
@@ -31,27 +26,42 @@ enum APIRouter: URLRequestConvertible {
             return "/version"
         case .operations:
             return "/operations"
-        case .absolutely(let company, let from):
-            return "/absolutely/\(company)/\(from)"
-        case .anyway(let company, let from):
-            return "/anyway/\(company)/\(from)"
-        case .asshole(let from):
-            return "/asshole/\(from)"
         }
     }
     
-    // MARK: - Parameters
-    private var parameters: Parameters? {
-        switch self {
-        case .absolutely(let company, let from):
-            return [K.APIParameterKey.company: company, K.APIParameterKey.from: from]
-        case .anyway(let company, let from):
-            return [K.APIParameterKey.company: company, K.APIParameterKey.from: from]
-        case .asshole(let from):
-            return [K.APIParameterKey.from: from]
-        case .version, .operations:
-            return nil
+    // MARK: - URLRequestConvertible
+    func asURLRequest() throws -> URLRequest {
+        let url = try K.ProductionServer.baseURL.asURL()
+        
+        var urlRequest = URLRequest(url: url.appendingPathComponent(path))
+        
+        // HTTP Method
+        urlRequest.httpMethod = method.rawValue
+        
+        // Common Headers
+        urlRequest.setValue(AcceptType.json.rawValue, forHTTPHeaderField: HTTPHeaderField.acceptType.rawValue)
+       
+        return urlRequest
+    }
+}
+
+class DetailAPIRouter: URLRequestConvertible {
+    let content: Operations
+    init(content: Operations) {
+        self.content = content
+    }
+    // MARK: - HTTPMethod
+    private var method: HTTPMethod {
+        return .get
+    }
+    
+    // MARK: - Path
+    private var path: String {
+        var pathString = "/\(content.url.pathComponents[1])"
+        content.fields.forEach { field in
+            pathString = "\(pathString)/\(String(describing: field.field))"
         }
+        return pathString
     }
     
     // MARK: - URLRequestConvertible
@@ -63,19 +73,10 @@ enum APIRouter: URLRequestConvertible {
         urlRequest.httpMethod = method.rawValue
         
         // Common Headers
-        urlRequest.setValue(ContentType.json.rawValue, forHTTPHeaderField: HTTPHeaderField.acceptType.rawValue)
-        urlRequest.setValue(ContentType.json.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
-    
-        // Parameters
-        // Foaas API does not allow GET requests with Bodies
-//        if let parameters = parameters {
-//            do {
-//                urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
-//            } catch {
-//                throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
-//            }
-//        }
-        
+        urlRequest.setValue(AcceptType.json.rawValue, forHTTPHeaderField: HTTPHeaderField.acceptType.rawValue)
+       
         return urlRequest
     }
 }
+
+

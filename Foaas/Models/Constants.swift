@@ -13,6 +13,7 @@ struct K {
     }
     
     struct APIParameterKey {
+        static let classes = "class"
         static let behavior = "behavior"
         static let language = "language"
         static let thing = "thing"
@@ -35,5 +36,9 @@ enum HTTPHeaderField: String {
 }
 
 enum ContentType: String {
+    case json = "application/json"
+}
+
+enum AcceptType: String {
     case json = "application/json"
 }

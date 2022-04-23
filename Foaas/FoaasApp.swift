@@ -11,7 +11,8 @@ import SwiftUI
 struct FoaasApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            let services = APIService()
+            ContentView(operations: services)
         }
     }
 }

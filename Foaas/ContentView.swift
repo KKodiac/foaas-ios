@@ -8,100 +8,60 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var message: String = ""
-    @State private var subtitle: String = ""
+    @ObservedObject var operations: APIService
     
     var body: some View {
-        VStack {
+        VStack() {
+            operationBody
+            Divider()
+            resultBody
+        }
+        .onAppear {
+            operations.loadOperations()
+        }
+    }
+    
+    var operationBody: some View {
+        ScrollView {
             VStack {
-                Text(message)
-                    .font(.headline)
-                    .padding(.all)
-                HStack {
-                    Spacer()
-                    Text(subtitle)
-                        .font(.footnote)
-                        .multilineTextAlignment(.trailing)
-                        .padding(.all)
+                ForEach(operations.operations) { op in
+                    Button(action: {
+                        operations.loadDetailOperations(content: op)
+                    }) {
+                        VStack {
+                            Text("Name: \(op.name)")
+                                .foregroundColor(Color.black)
+                                .font(.headline)
+                            Text("URL: \(op.url)")
+                                .foregroundColor(Color.gray)
+                                .font(.subheadline)
+                            Divider()
+                        }
+                    }
                 }
             }
+        }
+    }
+        
+    var resultBody: some View {
+        VStack(alignment: .trailing) {
+            Text(operations.message)
+                .font(.headline)
+                .textFieldStyle(.roundedBorder)
+                .padding(.bottom)
             
-            .padding(6)
-            Spacer()
-            Button(action: self.version) {
-                Text("Version")
-            }
-            Divider()
-            Button(action:self.absolutely) {
-                Text("Absolutely")
-            }
-            Divider()
-            Button(action:self.anyway) {
-                Text("Anyway")
-            }
-            Divider()
-            Button(action:self.asshole) {
-                Text("Asshole")
-            }
+            Text(operations.subtitle)
+                .font(.subheadline)
+                .textFieldStyle(.roundedBorder)
         }
+        .padding(.all)
     }
-    
-    func version() {
-        APIClient.version { result in
-            switch result {
-            case .success(let version):
-                message = version.message
-                subtitle = version.subtitle
-                print(version)
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func absolutely() {
-        APIClient.absolutely(company: "John", from: "Sean") { result in
-            switch result {
-            case .success(let content):
-                message = content.message
-                subtitle = content.subtitle
-                print(content)
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func anyway() {
-        APIClient.anyway(company: "John", from: "Sean") { result in
-            switch result {
-            case .success(let content):
-                message = content.message
-                subtitle = content.subtitle
-                print(content)
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func asshole() {
-        APIClient.asshole(from: "Sean") { result in
-            switch result {
-            case .success(let content):
-                message = content.message
-                subtitle = content.subtitle
-                print(content)
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
 }
+    
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let services = APIService()
+        ContentView(operations: services)
     }
 }

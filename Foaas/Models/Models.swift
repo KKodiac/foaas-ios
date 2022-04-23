@@ -14,12 +14,22 @@ struct Foaas: Codable {
 
 
 struct Operations: Codable {
-    let name: String
-    let url: URL
-    let fields: [Field]
+    var name: String
+    var url: URL
+    var fields: [Fields]
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case url
+        case fields
+    }
 }
 
-struct Field: Codable {
-    let name: String
-    let field: String
+struct Fields: Codable {
+    let name: String?
+    let field: String?
+}
+
+extension Operations: Identifiable {
+    var id: UUID { return UUID() }
 }
