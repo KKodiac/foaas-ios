@@ -29,4 +29,11 @@ class APIClient {
                 completion(response.result)
             }
     }
+    
+    static func detailsObjects(of content: Operations, andObject object: String, completion: @escaping (Result<Foaas, AFError>) -> Void) {
+        AF.request(DetailObjectAPIRouter(content: content, userObjects: object))
+            .responseDecodable { (response: DataResponse<Foaas, AFError>) in
+                completion(response.result)
+            }
+    }
 }

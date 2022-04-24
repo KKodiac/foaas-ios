@@ -10,22 +10,14 @@ import Foundation
 struct K {
     struct ProductionServer {
         static let baseURL = "https://foaas.com"
+//        static let baseURL = "https://foaas-kr.herokuapp.com" // For testing with Korean FOAAS
     }
     
-    struct APIParameterKey {
-        static let classes = "class"
-        static let behavior = "behavior"
-        static let language = "language"
-        static let thing = "thing"
-        static let noun = "noun"
-        static let reference = "reference"
-        static let something = "something"
-        static let doing = "do"
-        static let tool = "tool"
-        static let company = "company"
-        static let name = "name"
-        static let from = "from"
-    }
+    
+}
+
+struct APIParameterKey {
+    var objects: [UUID: String] = [UUID:String]()
 }
 
 enum HTTPHeaderField: String {

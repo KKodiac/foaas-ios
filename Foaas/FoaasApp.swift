@@ -12,7 +12,8 @@ struct FoaasApp: App {
     var body: some Scene {
         WindowGroup {
             let services = APIService()
-            ContentView(operations: services)
+            let detailServices = APIServiceDetail()
+            ContentView(operations: services, detailOperations: detailServices, tappedContent: Operations(name: "", url: nil, fields: [Fields(name: "", field: "")]))
         }
     }
 }

@@ -57,9 +57,9 @@ class DetailAPIRouter: URLRequestConvertible {
     
     // MARK: - Path
     private var path: String {
-        var pathString = "/\(content.url.pathComponents[1])"
-        content.fields.forEach { field in
-            pathString = "\(pathString)/\(String(describing: field.field))"
+        var pathString = "/\(content.url!.pathComponents[1])"
+        content.url!.pathComponents[2...].forEach { path in
+            pathString = "\(pathString)/<\(path)>"
         }
         return pathString
     }
@@ -80,3 +80,38 @@ class DetailAPIRouter: URLRequestConvertible {
 }
 
 
+class DetailObjectAPIRouter: URLRequestConvertible {
+    let content: Operations
+    let userObjects: String
+    init(content: Operations, userObjects: String) {
+        self.content = content
+        self.userObjects = userObjects
+    }
+    // MARK: - HTTPMethod
+    private var method: HTTPMethod {
+        return .get
+    }
+    
+    // MARK: - Path
+    private var path: String {
+        var pathString = "/\(content.url!.pathComponents[1])"
+        userObjects.components(separatedBy: " ").forEach { path in
+            pathString = "\(pathString)/\(path)"
+        }
+        return pathString
+    }
+    
+    // MARK: - URLRequestConvertible
+    func asURLRequest() throws -> URLRequest {
+        let url = try K.ProductionServer.baseURL.asURL()
+        
+        var urlRequest = URLRequest(url: url.appendingPathComponent(path))
+        // HTTP Method
+        urlRequest.httpMethod = method.rawValue
+        
+        // Common Headers
+        urlRequest.setValue(AcceptType.json.rawValue, forHTTPHeaderField: HTTPHeaderField.acceptType.rawValue)
+       
+        return urlRequest
+    }
+}

@@ -15,7 +15,7 @@ struct Foaas: Codable {
 
 struct Operations: Codable {
     var name: String
-    var url: URL
+    var url: URL?
     var fields: [Fields]
     
     enum CodingKeys: String, CodingKey {
@@ -32,4 +32,13 @@ struct Fields: Codable {
 
 extension Operations: Identifiable {
     var id: UUID { return UUID() }
+}
+
+extension Fields: Identifiable {
+    var id: UUID { return UUID() }
+}
+
+struct FieldValues {
+    var name: String
+    var field: String
 }
