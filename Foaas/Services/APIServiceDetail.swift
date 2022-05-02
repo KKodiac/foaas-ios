@@ -9,10 +9,10 @@ import Foundation
 import Alamofire
 
 class APIServiceDetail: ObservableObject {
-//    @Published var detailsObject: [String]?
     @Published var message: String?
     @Published var subtitle: String?
     
+    // MARK: 현재 선택된 FOAAS 쿼리 메세지 및 부재 호출
     func loadDetailOperationObjects(content: Operations, object: String) {
         APIClient.detailsObjects(of: content, andObject: object) { result in
             switch result {
