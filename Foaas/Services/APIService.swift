@@ -14,6 +14,7 @@ class APIService: ObservableObject {
     @Published var subtitle: String = ""
     @Published var searchText: String = ""
     @Published var isProperSearch = false
+    @Published var isOperationFound = false
     @Published var isAllOperationsLoaded = false
     @Published var searchedOperation: Operations = Operations(name: "Please Enter a Search", url: URL(string: "/"), fields: [Fields(name: "", field: "")])
     
@@ -59,7 +60,7 @@ class APIService: ObservableObject {
         }
     }
     
-    // MARK: 현재 Searchable Text에 대한 쿼리 요처
+    // MARK: 현재 Searchable Text에 대한 쿼리 요청
     func submitCurrentSearchQuery() {
         if operations.isEmpty {
             isAllOperationsLoaded.toggle()
@@ -68,7 +69,8 @@ class APIService: ObservableObject {
             operations.forEach { operation in
                 if searchText.lowercased() == operation.url?.pathComponents[1] {
                     searchedOperation = operation
-                }
+                    isOperationFound = true
+                } 
             }
         }
         

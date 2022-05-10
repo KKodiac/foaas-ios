@@ -14,18 +14,22 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            ZStack(alignment: .top) {
-                OperationsView(operations: operations, states: state)
-                    .searchable(text: $operations.searchText, placement: .sidebar)
-                    .onSubmit(of: .search) {
-                        operations.isProperSearch = true
-                        operations.submitCurrentSearchQuery()
-                    }
-                ResultsView(detailOperations: detailOperations, states: state)
+            if !operations.isAllOperationsLoaded {
+                ProgressView()
+                    .onAppear {
+                        operations.loadOperations()
+                }
+            } else {
+                ZStack(alignment: .top) {
+                    OperationsView(operations: operations, states: state)
+                        .searchable(text: $operations.searchText, placement: .toolbar)
+                        .onSubmit(of: .search) {
+                            operations.isProperSearch = true
+                            operations.submitCurrentSearchQuery()
+                        }
+                    ResultsView(detailOperations: detailOperations, states: state)
+                }
             }
-        }
-        .onAppear {
-            operations.loadOperations()
         }
     }
 }

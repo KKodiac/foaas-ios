@@ -12,6 +12,7 @@ import SlideOverCard
 struct ResultsView: View {
     @ObservedObject var detailOperations: APIServiceDetail
     @ObservedObject var states: AppStates
+    @FocusState private var isFieldFocussed: Bool
     
     var body: some View {
         SlideOverCard($states.cardPosition, backgroundStyle: $states.cardBackground) {
@@ -21,10 +22,12 @@ struct ResultsView: View {
                 Text("Enter values separated with spaces")
                     .font(.subheadline)
                 TextField("\(states.tappedContent?.url?.absoluteString ?? "")", text:$states.fieldValue)
+                    .focused($isFieldFocussed)
                     .textFieldStyle(.roundedBorder)
                     .padding([.leading, .trailing])
                 Button(action: {
                     states.isHidden.toggle()
+                    isFieldFocussed = false
                     detailOperations.loadDetailOperationObjects(content: states.tappedContent!, object: states.fieldValue)
                 }) {
                     Text(states.isHidden ? "Hide" : "Show")
@@ -32,6 +35,7 @@ struct ResultsView: View {
                         .fontWeight(.bold)
                 }
                 .buttonStyle(.borderedProminent)
+                
                 
                 VStack(alignment: .trailing)  {
                     Text(detailOperations.message ?? "")

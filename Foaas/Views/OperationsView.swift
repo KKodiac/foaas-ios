@@ -16,9 +16,6 @@ struct OperationsView: View {
     @Environment(\.isSearching) private var isSearching
     
     var body: some View {
-        if !operations.isAllOperationsLoaded {
-            ProgressView()
-        }
         if isSearching {
             // MARK: Search Result
             Button(action: {
@@ -35,13 +32,14 @@ struct OperationsView: View {
                     Text("\(operations.searchedOperation.url!)")
                         .foregroundColor(Color.gray)
                         .font(.subheadline)
-                        .opacity(operations.isProperSearch ? 1 : 0)
+                        .opacity(operations.isProperSearch && operations.isOperationFound ? 1 : 0)
                 }
             }
-            .disabled(!operations.isProperSearch)
+            .disabled(!operations.isProperSearch || !operations.isOperationFound)
             .onAppear{
                 operations.searchedOperation.name = "Please Enter a Search"
                 operations.isProperSearch = false
+                states.cardPosition = CardPosition.bottom
             }
         } else {
             // MARK: /Operations Result
